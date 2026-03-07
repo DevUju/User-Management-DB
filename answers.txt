@@ -1,0 +1,20 @@
+Q1: What is Mongoose and why do we use it instead of the native MongoDB driver?
+Mongoose is an ODM (Object Data Modeling) library for MongoDB. It provides schemas, models, and validation, making MongoDB easier to use. The native driver only lets us run raw queries, while Mongoose adds structure and rules that help keep our data consistent.
+
+Q2: What is a Mongoose Schema? How does it differ from what we did with the users.json file?
+A Mongoose Schema defines the structure of documents in a collection — what fields exist, their types, and rules like required or unique. With users.json we just stored plain objects with no enforced structure. Schemas enforce consistency and validation at the database level.
+
+Q3: Why do we need both the unique: true rule AND the error handler for code 11000?
+The schema rule tells MongoDB to enforce uniqueness. But if a duplicate is attempted, MongoDB throws error code 11000. Without handling that error, the app would crash or return a generic error. Having both ensures duplicates are blocked and the user gets a clear message.
+
+Q4: What would happen if you called connectDB() after app.listen()? Would there be problems?
+Yes. app.listen() starts the server before the database is connected. That means routes could be hit while the DB isn’t ready, causing errors. Best practice is to connect to the database first, then start the server only after a successful connection.
+
+Q5: Why is it important to store your MONGO_URI in a .env file rather than writing it directly in db.js?
+Environment variables keep secrets out of source code. Hardcoding the URI exposes your database credentials. Using .env makes it easy to change configs per environment (development, production) and keeps sensitive info secure.
+
+Q6: In the login controller, why do we return the same error message ("Invalid email or password") for both missing email and wrong password?
+It prevents attackers from learning which part failed. If you said "User not found," they’d know the email is invalid. If you said "Incorrect password," they’d know the email exists. A generic message hides that information and improves security.
+
+Q7: The register controller uses new User() + user.save(), while the CRUD controller uses User.create(). What’s the key difference, and why does it matter for password hashing?
+new User() + user.save() creates an instance first, then saves it — this triggers pre‑save middleware (like password hashing). User.create() is a shortcut that inserts directly, and depending on setup, may bypass certain middleware. For password hashing, using save() ensures the hashing logic runs correctly.
