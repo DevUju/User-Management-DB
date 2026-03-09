@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 async function register(req, res) {
   try {
     const { name, email, password, age, role } = req.body;
-    if (!name || !email || !password || age || role) {
+    if (!name || !email || !password || !age || !role) {
       return res.status(400).json({
         message: "All Fields are Required",
       });
@@ -18,10 +18,11 @@ async function register(req, res) {
         message: "User already Exist",
       });
     }
+    console.log("I got here first")
+    const user = await User.create({ name, email, password, age, role });
+    console.log("I got here")
 
-    const user = new User({ name, email, password, age, role });
-    await user.save();
-
+    console.log("I got here also and here is the data", user)
     res.status(201).json({
       success: true,
       message: "User registered successfully",

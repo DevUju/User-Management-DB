@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   getUsers,
   getUser,
@@ -11,7 +12,8 @@ const {
   getUsersCountByRole
 } = require("../controllers/userController");
 const validateUser = require("../middlewares/validateUser");
-const protect = require("../middlewares/protected");
+const { protect } = require("../middlewares/protected");
+
 
 router.get("/", protect, getUsers);
 router.get("/", protect, getUserByRole);

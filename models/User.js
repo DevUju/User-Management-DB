@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
       trim: true,
-      minlenght: [2, "Name must be at least 2 characters long"],
+      minlength: [2, "Name must be at least 2 characters long"],
     },
 
     email: {
@@ -42,10 +42,16 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.password || !this.isModified("password")) {
+    return
+  }
 
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  } catch (error) {
+    console.error("Bcrypt Hashing Error:", error);
+  }
 });
 
 const User = mongoose.model("User", userSchema);
